@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iM뱅크 | 본부 상담 요약 & 챗봇 생성 시스템</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mint: #00C8AA;
+    --mint-light: #00E5C8;
+    --mint-dark: #00A08A;
+    --mint-pale: #E6FAF7;
+    --mint-mid: #B3F0E8;
+    --navy: #0A2540;
+    --navy-mid: #143055;
+    --gray-bg: #F5F7FA;
+    --gray-border: #E2E8F0;
+    --gray-text: #64748B;
+    --gray-dark: #334155;
+    --white: #FFFFFF;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-lg: 0 10px 40px rgba(0,0,0,0.10);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--gray-bg);
+    color: var(--navy);
+    min-height: 100vh;
+  }
+
+  /* ────────────── HEADER ────────────── */
+  header {
+    background: var(--navy);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--mint);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--navy);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--white);
+    letter-spacing: 0.5px;
+  }
+
+  .logo-text span {
+    color: var(--mint);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-badge {
+    background: rgba(0,200,170,0.15);
+    border: 1px solid rgba(0,200,170,0.3);
+    color: var(--mint);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--mint);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+  }
+
+  /* ────────────── LAYOUT ────────────── */
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 60px);
+  }
+
+  /* ────────────── SIDEBAR ────────────── */
+  aside {
+    background: var(--white);
+    border-right: 1px solid var(--gray-border);
+    padding: 24px 0;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+
+  .sidebar-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+  }
+
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--gray-text);
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--gray-dark);
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .sidebar-item:hover { background: var(--mint-pale); color: var(--mint-dark); }
+  .sidebar-item.active {
+    background: var(--mint-pale);
+    color: var(--mint-dark);
+    font-weight: 700;
+  }
+  .sidebar-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    background: var(--mint);
+    border-radius: 0 3px 3px 0;
+  }
+
+  .sidebar-icon { font-size: 15px; width: 20px; text-align: center; }
+
+  .sidebar-badge {
+    margin-left: auto;
+    background: var(--mint);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .sidebar-divider {
+    height: 1px;
+    background: var(--gray-border);
+    margin: 8px 16px 16px;
+  }
+
+  /* ────────────── MAIN CONTENT ────────────── */
+  main {
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
+
+  /* ────────────── PAGE TABS ────────────── */
+  .page-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 5px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    width: fit-content;
+    border: 1px solid var(--gray-border);
+  }
+
+  .tab-btn {
+    padding: 9px 22px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-text);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab-btn.active {
+    background: var(--navy);
+    color: var(--white);
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ────────────── PAGE SECTIONS ────────────── */
+  .page-section { display: none; }
+  .page-section.active { display: block; }
+
+  /* ────────────── STATS ROW ────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    border: 1px solid var(--gray-border);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+
+  .stat-card:hover { box-shadow: var(--shadow-md); }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--mint);
+  }
+
+  .stat-card.warn::after { background: var(--warning); }
+  .stat-card.ok::after { background: var(--success); }
+  .stat-card.info::after { background: #6366F1; }
+
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--gray-text);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--navy);
+    line-height: 1;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: -0.5px;
+  }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--gray-text);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .stat-icon {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    font-size: 22px;
+    opacity: 0.18;
+  }
+
+  /* ────────────── SECTION HEADER ────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--mint);
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .btn {
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: var(--mint);
+    color: var(--navy);
+  }
+  .btn-primary:hover { background: var(--mint-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,200,170,0.35); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--gray-dark);
+    border: 1.5px solid var(--gray-border);
+  }
+  .btn-outline:hover { border-color: var(--mint); color: var(--mint-dark); }
+
+  .btn-navy {
+    background: var(--navy);
+    color: var(--white);
+  }
+  .btn-navy:hover { background: var(--navy-mid); }
+
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-danger { background: #FEF2F2; color: var(--danger); border: 1px solid #FECACA; }
+
+  /* ────────────── CALL LIST ────────────── */
+  .call-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .call-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-border);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.18s;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .call-card:hover { border-color: var(--mint); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .call-card.selected { border-color: var(--mint); background: var(--mint-pale); }
+
+  .call-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .call-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .call-type-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .badge-new { background: #EEF2FF; color: #6366F1; }
+  .badge-review { background: #FEF3C7; color: #D97706; }
+  .badge-done { background: #D1FAE5; color: #059669; }
+
+  .call-branch {
+    font-size: 12px;
+    color: var(--gray-text);
+    font-weight: 500;
+  }
+
+  .call-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+
+  .call-summary {
+    font-size: 12.5px;
+    color: var(--gray-text);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .call-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--gray-border);
+  }
+
+  .call-time {
+    font-size: 11px;
+    color: var(--gray-text);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .call-actions { display: flex; gap: 6px; }
+
+  /* ────────────── DETAIL PANEL ────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .detail-panel {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-border);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    background: var(--navy);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-header h3 {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .panel-body { padding: 20px; }
+
+  /* ────────────── TRANSCRIPT ────────────── */
+  .transcript-box {
+    background: var(--gray-bg);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--gray-dark);
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid var(--gray-border);
+    margin-bottom: 16px;
+  }
+
+  .transcript-box .speaker {
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-right: 6px;
+  }
+
+  .speaker-hq { background: var(--mint-pale); color: var(--mint-dark); }
+  .speaker-br { background: #EEF2FF; color: #6366F1; }
+
+  /* ────────────── QNA EDITOR ────────────── */
+  .qna-item {
+    background: var(--gray-bg);
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--gray-border);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .qna-item:focus-within { border-color: var(--mint); }
+
+  .qna-q {
+    padding: 12px 14px;
+    background: var(--navy);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .qna-q-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--mint);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .qna-q textarea,
+  .qna-a textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+    line-height: 1.6;
+    min-height: 40px;
+  }
+
+  .qna-q textarea { color: var(--white); }
+  .qna-a textarea { color: var(--gray-dark); }
+
+  .qna-a {
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--white);
+  }
+
+  .qna-a-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--mint-dark);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .qna-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--gray-bg);
+    border-top: 1px solid var(--gray-border);
+  }
+
+  /* ────────────── APPROVAL PANEL ────────────── */
+  .approval-box {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    border-radius: var(--radius);
+    padding: 20px;
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .approval-box::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    background: rgba(0,200,170,0.12);
+    border-radius: 50%;
+  }
+
+  .approval-box h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .approval-box p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .approval-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .approval-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .approval-meta-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 500;
+  }
+
+  .approval-meta-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mint);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .tag {
+    background: rgba(0,200,170,0.15);
+    border: 1px solid rgba(0,200,170,0.3);
+    color: var(--mint);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .approval-btn-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-approve {
+    flex: 1;
+    background: var(--mint);
+    color: var(--navy);
+    font-weight: 700;
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-approve:hover { background: var(--mint-light); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,200,170,0.4); }
+
+  .btn-reject {
+    padding: 11px 16px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,0.15);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-reject:hover { background: rgba(239,68,68,0.15); color: #FCA5A5; border-color: rgba(239,68,68,0.3); }
+
+  /* ────────────── CHATBOT KB PAGE ────────────── */
+  .kb-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .kb-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--gray-border);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .kb-card:hover { border-color: var(--mint); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+  .kb-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .kb-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  .cat-loan { background: #EFF6FF; color: #3B82F6; }
+  .cat-deposit { background: #F0FDF4; color: #16A34A; }
+  .cat-foreign { background: #FFF7ED; color: #EA580C; }
+  .cat-digital { background: #F5F3FF; color: #7C3AED; }
+  .cat-card { background: #FFF1F2; color: #E11D48; }
+  .cat-general { background: #F8FAFC; color: #475569; }
+
+  .kb-card-q {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .kb-card-a {
+    font-size: 12px;
+    color: var(--gray-text);
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .kb-card-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .kb-card-date {
+    font-size: 11px;
+    color: var(--gray-text);
+  }
+
+  .kb-card-views {
+    font-size: 11px;
+    color: var(--gray-text);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ────────────── SEARCH BAR ────────────── */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--white);
+    border: 1.5px solid var(--gray-border);
+    border-radius: var(--radius-sm);
+    padding: 0 14px;
+    gap: 10px;
+    transition: border-color 0.15s;
+  }
+
+  .search-bar:focus-within { border-color: var(--mint); }
+
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    padding: 10px 0;
+    background: transparent;
+    color: var(--navy);
+  }
+
+  .search-icon { color: var(--gray-text); font-size: 14px; }
+
+  /* ────────────── FILTER ROW ────────────── */
+  .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--gray-border);
+    background: var(--white);
+    color: var(--gray-text);
+    transition: all 0.15s;
+  }
+
+  .filter-chip.active, .filter-chip:hover {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  /* ────────────── TOAST ────────────── */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 9999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .toast-icon { color: var(--mint); font-size: 16px; }
+
+  /* ────────────── MODAL ────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,37,64,0.55);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--white);
+    border-radius: var(--radius);
+    width: 540px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+  .modal-header {
+    padding: 22px 24px 16px;
+    border-bottom: 1px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .modal-header h3 { font-size: 16px; font-weight: 700; color: var(--navy); }
+
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--gray-bg);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--gray-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-body { padding: 20px 24px; }
+  .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .kb-detail-q {
+    background: var(--navy);
+    color: var(--white);
+    padding: 14px 16px;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .kb-detail-a {
+    background: var(--mint-pale);
+    padding: 14px 16px;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: var(--navy);
+    border: 1px solid var(--mint-mid);
+    border-top: none;
+    margin-bottom: 16px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-border);
+    font-size: 13px;
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+  .detail-key { color: var(--gray-text); font-weight: 500; }
+  .detail-val { color: var(--navy); font-weight: 600; }
+
+  /* ────────────── EMPTY STATE ────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--gray-text);
+  }
+
+  .empty-icon { font-size: 42px; margin-bottom: 12px; }
+  .empty-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .empty-desc { font-size: 13px; line-height: 1.6; }
+
+  /* ────────────── PROGRESS STEP ────────────── */
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    border: 1px solid var(--gray-border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .flow-step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gray-bg);
+    border: 2px solid var(--gray-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray-text);
+    flex-shrink: 0;
+  }
+
+  .flow-step.done .flow-step-circle { background: var(--mint); border-color: var(--mint); color: var(--navy); }
+  .flow-step.active .flow-step-circle { background: var(--navy); border-color: var(--navy); color: var(--white); }
+
+  .flow-step-info { min-width: 0; }
+  .flow-step-label { font-size: 11px; color: var(--gray-text); font-weight: 500; }
+  .flow-step-name { font-size: 13px; font-weight: 700; color: var(--navy); }
+  .flow-step.done .flow-step-name { color: var(--mint-dark); }
+
+  .flow-connector {
+    flex: 0 0 40px;
+    height: 2px;
+    background: var(--gray-border);
+    margin: 0 8px;
+  }
+
+  .flow-connector.done { background: var(--mint); }
+
+  /* ────────────── SCROLLBAR ────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--gray-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--mint); }
+
+  /* ────────────── ANIMATE ────────────── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fadeInUp 0.3s ease forwards; }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--mint);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.7; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">iM</div>
+    <div class="logo-text">i<span>M</span>Bank <span style="color:rgba(255,255,255,0.35);font-size:13px;margin-left:4px;font-family:'Noto Sans KR'">본부 Q&A 시스템</span></div>
+  </div>
+  <div class="header-right">
+    <div class="header-badge">🟢 LIVE</div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.55);">ICT 금융부</div>
+    <div class="user-avatar">안</div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-section">
+      <div class="sidebar-label">메인 메뉴</div>
+      <div class="sidebar-item active" onclick="showTab('dashboard')">
+        <span class="sidebar-icon">📊</span> 대시보드
+      </div>
+      <div class="sidebar-item" onclick="showTab('calls')">
+        <span class="sidebar-icon">📞</span> 상담 내역
+        <span class="sidebar-badge">3</span>
+      </div>
+      <div class="sidebar-item" onclick="showTab('review')">
+        <span class="sidebar-icon">✏️</span> Q&A 검토·수정
+        <span class="sidebar-badge">2</span>
+      </div>
+      <div class="sidebar-item" onclick="showTab('kb')">
+        <span class="sidebar-icon">📚</span> 챗봇 지식 DB
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">설정</div>
+      <div class="sidebar-item">
+        <span class="sidebar-icon">🏷️</span> 카테고리 관리
+      </div>
+      <div class="sidebar-item">
+        <span class="sidebar-icon">👥</span> 부서 설정
+      </div>
+      <div class="sidebar-item">
+        <span class="sidebar-icon">⚙️</span> 시스템 설정
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div style="padding:16px;background:var(--mint-pale);margin:0 16px;border-radius:var(--radius-sm);border:1px solid var(--mint-mid);">
+      <div style="font-size:11px;font-weight:700;color:var(--mint-dark);margin-bottom:4px;">💡 AI 분석 현황</div>
+      <div style="font-size:11px;color:var(--gray-text);line-height:1.6;">오늘 <b style="color:var(--navy)">8건</b> 상담 분석<br>Q&A <b style="color:var(--navy)">20개</b> 자동 생성</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- ─── DASHBOARD ─── -->
+    <div id="tab-dashboard" class="page-section active fade-in">
+      <div style="margin-bottom:20px;">
+        <h2 style="font-size:20px;font-weight:900;color:var(--navy);">안녕하세요, 김아뱅 님 👋</h2>
+        <p style="font-size:13px;color:var(--gray-text);margin-top:4px;">오늘도 iM뱅크 본부 Q&A 시스템을 이용해주세요. 현재 검토 대기 Q&A가 <b style="color:var(--mint-dark)">3건</b> 있습니다.</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">오늘 수신 상담</div>
+          <div class="stat-value">8</div>
+          <div class="stat-sub">📈 전일 대비 +2건</div>
+          <div class="stat-icon">📞</div>
+        </div>
+        <div class="stat-card warn">
+          <div class="stat-label">검토 대기</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub">⏳ 빠른 검토 필요</div>
+          <div class="stat-icon">✏️</div>
+        </div>
+        <div class="stat-card ok">
+          <div class="stat-label">이번달 등록 Q&A</div>
+          <div class="stat-value">47</div>
+          <div class="stat-sub">✅ 챗봇 반영 완료</div>
+          <div class="stat-icon">📚</div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-label">전화 감소율</div>
+          <div class="stat-value">31%</div>
+          <div class="stat-sub">🎯 목표 대비 62%</div>
+          <div class="stat-icon">📉</div>
+        </div>
+      </div>
+
+      <!-- Flow Diagram -->
+      <div class="flow-steps">
+        <div class="flow-step done">
+          <div class="flow-step-circle">✓</div>
+          <div class="flow-step-info">
+            <div class="flow-step-label">STEP 1</div>
+            <div class="flow-step-name">전화 상담 수신</div>
+          </div>
+        </div>
+        <div class="flow-connector done"></div>
+        <div class="flow-step done">
+          <div class="flow-step-circle">✓</div>
+          <div class="flow-step-info">
+            <div class="flow-step-label">STEP 2</div>
+            <div class="flow-step-name">AI 자동 텍스트화</div>
+          </div>
+        </div>
+        <div class="flow-connector done"></div>
+        <div class="flow-step done">
+          <div class="flow-step-circle">✓</div>
+          <div class="flow-step-info">
+            <div class="flow-step-label">STEP 3</div>
+            <div class="flow-step-name">Q&A 초안 생성</div>
+          </div>
+        </div>
+        <div class="flow-connector"></div>
+        <div class="flow-step active">
+          <div class="flow-step-circle">4</div>
+          <div class="flow-step-info">
+            <div class="flow-step-label">STEP 4</div>
+            <div class="flow-step-name">본부 검토·승인</div>
+          </div>
+        </div>
+        <div class="flow-connector"></div>
+        <div class="flow-step">
+          <div class="flow-step-circle">5</div>
+          <div class="flow-step-info">
+            <div class="flow-step-label">STEP 5</div>
+            <div class="flow-step-name">챗봇 DB 등록</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">최근 상담 내역</div>
+        <button class="btn btn-outline btn-sm" onclick="showTab('calls')">전체 보기 →</button>
+      </div>
+
+      <div class="call-list">
+        <div class="call-card" onclick="showTab('review2')">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-new">신규 접수</span>
+              <span class="call-branch">📍 영남대 지점</span>
+            </div>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mint-dark);font-weight:600;"><span class="pulse-dot"></span>AI 분석 완료</span>
+          </div>
+          <div class="call-title">영업 마감 시 123456 부수계정 잔액 처리 방법</div>
+          <div class="call-summary">영업점 마감 중 123456 부수계정에 원인 불명 잔액이 남아 마감 불가 문의. 본부 카드 수수료 처리용 임시 계정임을 안내하고, 관련 공문·동보메시지 확인을 통해 처리 유도.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 16:42 · 통화 3분 15초</span>
+            <div class="call-actions">
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showTab('review2')">검토하기</button>
+            </div>
+          </div>
+        </div>
+        <div class="call-card" onclick="showTab('review')">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-review">검토 대기</span>
+              <span class="call-branch">📍 대구 수성지점</span>
+            </div>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mint-dark);font-weight:600;"><span class="pulse-dot"></span>AI 분석 완료</span>
+          </div>
+          <div class="call-title">중소기업 운전자금 대출 한도 산정 기준 문의</div>
+          <div class="call-summary">영업점 직원이 중소기업 운전자금 대출 신청 시 매출액 기준과 신용등급 반영 비율에 대해 문의. 본부 담당자가 최신 규정 기준으로 상세 안내함.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 14:23 · 통화 7분 42초</span>
+            <div class="call-actions">
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showTab('review')">검토하기</button>
+            </div>
+          </div>
+        </div>
+        <div class="call-card" onclick="showTab('review3')">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-review">검토 대기</span>
+              <span class="call-branch">📍 포항 북구지점</span>
+            </div>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mint-dark);font-weight:600;"><span class="pulse-dot"></span>AI 분석 완료</span>
+          </div>
+          <div class="call-title">외화 송금 한도 초과 시 처리 절차 문의</div>
+          <div class="call-summary">법인 고객의 해외 송금 한도 초과 케이스 발생 시 외환부서 협의 절차 및 필요서류 확인 문의.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 11:05 · 통화 4분 18초</span>
+            <div class="call-actions">
+              <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showTab('review3')">검토하기</button>
+            </div>
+          </div>
+        </div>
+        <div class="call-card">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-done">등록 완료</span>
+              <span class="call-branch">📍 안동 지점</span>
+            </div>
+          </div>
+          <div class="call-title">iM뱅크 앱 기업인증서 재발급 방법</div>
+          <div class="call-summary">기업 고객 스마트폰 교체 후 앱 인증서 이전 불가 케이스. 영업점 창구 방문 없이 앱에서 재발급 가능한 절차 안내.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 어제 16:40 · 통화 3분 22초</span>
+            <div class="call-actions">
+              <button class="btn btn-outline btn-sm" onclick="openModalAndong()">등록 내용 확인</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CALLS ─── -->
+    <div id="tab-calls" class="page-section">
+      <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h2 style="font-size:18px;font-weight:900;color:var(--navy);">상담 내역</h2>
+          <p style="font-size:12.5px;color:var(--gray-text);margin-top:3px;">영업점 전화 상담 목록 및 AI 분석 결과</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <div class="search-bar" style="flex:1;">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="상담 내용, 지점명으로 검색...">
+        </div>
+        <button class="btn btn-outline">📅 기간 필터</button>
+        <button class="btn btn-outline">🏷️ 분류</button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-chip active">전체 (12)</div>
+        <div class="filter-chip">검토 대기 (2)</div>
+        <div class="filter-chip">분석 중 (1)</div>
+        <div class="filter-chip">등록 완료 (9)</div>
+      </div>
+
+      <div class="call-list">
+        <div class="call-card" onclick="showTab('review2')">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-new">신규 접수</span>
+              <span class="call-branch">📍 영남대 지점 · 박똑디 행원</span>
+            </div>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mint-dark);font-weight:600;"><span class="pulse-dot"></span>AI 분석 완료</span>
+          </div>
+          <div class="call-title">영업 마감 시 123456 부수계정 잔액 처리 방법</div>
+          <div class="call-summary">영업점 마감 중 123456 부수계정에 원인 불명 잔액이 남아 마감 불가 문의. 본부 카드 수수료 처리용 임시 계정임을 안내하고, 관련 공문·동보메시지 확인을 통해 처리 유도. Q&A 2개 자동 생성됨.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 16:42 · 3분 15초 · ICT금융부 수신</span>
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showTab('review2')">Q&A 검토 →</button>
+          </div>
+        </div>
+        <div class="call-card selected" onclick="showTab('review')">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-review">검토 대기</span>
+              <span class="call-branch">📍 대구 수성지점 · 김단디 주임</span>
+            </div>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mint-dark);font-weight:600;"><span class="pulse-dot"></span>AI 분석 완료</span>
+          </div>
+          <div class="call-title">중소기업 운전자금 대출 한도 산정 기준 문의</div>
+          <div class="call-summary">영업점 직원이 중소기업 운전자금 대출 신청 시 매출액 기준과 신용등급 반영 비율에 대해 문의. 본부 담당자가 최신 규정 기준으로 상세 안내함. Q&A 2개 자동 생성됨.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 14:23 · 7분 42초 · ICT 금융부 수신</span>
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showTab('review')">Q&A 검토 →</button>
+          </div>
+        </div>
+        <div class="call-card" onclick="showTab('review3')">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-review">검토 대기</span>
+              <span class="call-branch">📍 포항 북구지점 · 이우디 대리</span>
+            </div>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mint-dark);font-weight:600;"><span class="pulse-dot"></span>AI 분석 완료</span>
+          </div>
+          <div class="call-title">외화 송금 한도 초과 시 처리 절차 문의</div>
+          <div class="call-summary">법인 고객의 해외 송금 한도 초과 케이스 발생 시 외환부서 협의 절차 및 필요서류 확인 문의.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 11:05 · 4분 18초 · 외환사업부 수신</span>
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();showTab('review3')">Q&A 검토 →</button>
+          </div>
+        </div>
+        <div class="call-card">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge" style="background:#FEE2E2;color:#DC2626;">분석 중</span>
+              <span class="call-branch">📍 경주 지점 · 최아뱅 행원</span>
+            </div>
+            <span style="font-size:11px;color:var(--gray-text);">⏳ STT 처리 중...</span>
+          </div>
+          <div class="call-title">개인사업자 비대면 한도 대출 가능 여부</div>
+          <div class="call-summary">상담 내용 분석 중입니다.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 오늘 15:48 · 5분 11초 · ICT 금융부 수신</span>
+          </div>
+        </div>
+        <div class="call-card">
+          <div class="call-card-top">
+            <div class="call-meta">
+              <span class="call-type-badge badge-done">등록 완료</span>
+              <span class="call-branch">📍 안동 지점 · 정대구 행원</span>
+            </div>
+          </div>
+          <div class="call-title">iM뱅크 앱 기업인증서 재발급 방법</div>
+          <div class="call-summary">기업 고객 스마트폰 교체 후 앱 인증서 이전 불가 케이스. 앱 재발급 절차 안내.</div>
+          <div class="call-footer">
+            <span class="call-time">🕐 어제 16:40 · 3분 22초 · 디지털금융부 수신</span>
+            <button class="btn btn-outline btn-sm" onclick="openModalAndong()">등록 내용 보기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── REVIEW ─── -->
+    <div id="tab-review" class="page-section">
+      <div style="margin-bottom:20px;">
+        <h2 style="font-size:18px;font-weight:900;color:var(--navy);">Q&A 검토 · 수정</h2>
+        <p style="font-size:12.5px;color:var(--gray-text);margin-top:3px;">AI 자동 생성된 Q&A를 검토하고 챗봇에 등록하세요</p>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <!-- 상담 원문 -->
+          <div class="detail-panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+              <h3>📞 상담 원문 (AI 텍스트 변환)</h3>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--mint);font-weight:600;">🤖 STT 신뢰도 97.3%</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex;gap:16px;margin-bottom:14px;padding:12px;background:var(--gray-bg);border-radius:var(--radius-sm);border:1px solid var(--gray-border);">
+                <div style="flex:1;text-align:center;">
+                  <div style="font-size:10px;color:var(--gray-text);font-weight:600;margin-bottom:3px;">발신</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">대구 수성지점</div>
+                  <div style="font-size:11px;color:var(--gray-text);">김단디 주임</div>
+                </div>
+                <div style="display:flex;align-items:center;color:var(--mint);font-size:18px;">→</div>
+                <div style="flex:1;text-align:center;">
+                  <div style="font-size:10px;color:var(--gray-text);font-weight:600;margin-bottom:3px;">수신</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">ICT 금융부</div>
+                  <div style="font-size:11px;color:var(--gray-text);">오늘 14:23 · 7분 42초</div>
+                </div>
+              </div>
+              <div class="transcript-box">
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-br">영업점</span>
+                  안녕하세요, 수성지점 김단디 주임입니다. 오늘 중소기업 고객이 운전자금 대출을 신청하셨는데요, 한도 산정할 때 매출액 기준이 정확히 어떻게 되는지 확인하고 싶어서요.
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-hq">본부</span>
+                  네, 김단디 주임님. 운전자금 대출 한도는 기본적으로 최근 1년 매출액의 xx% 이내에서 산정됩니다. 다만 신용등급 A등급 이상은 최대 xx%까지 상향 적용 가능합니다.
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-br">영업점</span>
+                  그러면 신용등급이 B+인 경우에는 xx% 기준으로만 적용되는 건가요? 그리고 부동산 담보가 있는 경우는 어떻게 되나요?
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-hq">본부</span>
+                  맞습니다. B+ 이하는 xx% 기준 적용입니다. 부동산 담보 제공 시에는 담보인정비율 xx% 범위 내에서 추가 한도가 반영될 수 있어요. 규정 제 99조 99항 참고하시면 됩니다.
+                </div>
+                <div>
+                  <span class="speaker speaker-br">영업점</span>
+                  감사합니다. 명확하게 이해했습니다. 규정 99조 확인해서 처리하겠습니다.
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">여신</span>
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">중소기업대출</span>
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">운전자금</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q&A 편집 -->
+          <div class="detail-panel">
+            <div class="panel-header">
+              <h3>🤖 AI 생성 Q&A — 수정 가능</h3>
+              <span style="font-size:11px;color:rgba(255,255,255,0.5);">클릭하여 직접 편집</span>
+            </div>
+            <div class="panel-body">
+
+              <div class="qna-item" id="qna1">
+                <div class="qna-q">
+                  <span class="qna-q-label">Q</span>
+                  <textarea id="q1" rows="2" oninput="autoResize(this)">중소기업 운전자금 대출 한도는 어떻게 산정하나요?</textarea>
+                </div>
+                <div class="qna-a">
+                  <span class="qna-a-label">A</span>
+                  <textarea id="a1" rows="4" oninput="autoResize(this)">중소기업 운전자금 대출 한도는 최근 1년 매출액의 xx% 이내에서 산정됩니다. 단, 신용등급 A등급 이상인 경우 최대 xx%까지 상향 적용이 가능합니다. (근거: 규정 제 99조 99항)</textarea>
+                </div>
+                <div class="qna-actions">
+                  <button class="btn btn-sm btn-outline" onclick="resetQna('q1','a1','중소기업 운전자금 대출 한도는 어떻게 산정하나요?','중소기업 운전자금 대출 한도는 최근 1년 매출액의 xx% 이내에서 산정됩니다. 단, 신용등급 A등급 이상인 경우 최대 xx%까지 상향 적용이 가능합니다. (근거: 규정 제 99조 99항)')">↺ 원본 복원</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeQna('qna1')">✕ 삭제</button>
+                </div>
+              </div>
+
+              <div class="qna-item" id="qna2">
+                <div class="qna-q">
+                  <span class="qna-q-label">Q</span>
+                  <textarea id="q2" rows="2" oninput="autoResize(this)">신용등급 B+ 이하 기업이 부동산 담보를 제공하는 경우 운전자금 대출 한도가 변경되나요?</textarea>
+                </div>
+                <div class="qna-a">
+                  <span class="qna-a-label">A</span>
+                  <textarea id="a2" rows="4" oninput="autoResize(this)">신용등급 B+ 이하의 경우 기본 한도는 매출액 xx% 기준이 적용됩니다. 단, 부동산 담보 제공 시에는 담보인정비율 xx% 범위 내에서 추가 한도가 반영될 수 있습니다. 상세 내용은 규정 제 99조 99항을 참고하시기 바랍니다.</textarea>
+                </div>
+                <div class="qna-actions">
+                  <button class="btn btn-sm btn-outline" onclick="resetQna('q2','a2','신용등급 B+ 이하 기업이 부동산 담보를 제공하는 경우 운전자금 대출 한도가 변경되나요?','신용등급 B+ 이하의 경우 기본 한도는 매출액 xx% 기준이 적용됩니다. 단, 부동산 담보 제공 시에는 담보인정비율 xx% 범위 내에서 추가 한도가 반영될 수 있습니다. 상세 내용은 규정 제 99조 99항을 참고하시기 바랍니다.')">↺ 원본 복원</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeQna('qna2')">✕ 삭제</button>
+                </div>
+              </div>
+
+              <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:4px;" onclick="addQna()">
+                + Q&A 직접 추가
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 승인 패널 -->
+        <div>
+          <div class="approval-box" style="margin-bottom:16px;">
+            <h4>📋 챗봇 등록 정보</h4>
+            <p>아래 정보를 확인하고 승인 시 챗봇 지식 DB에 즉시 반영됩니다.</p>
+            <div class="approval-meta">
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">카테고리</span>
+                <span class="approval-meta-value">여신 · 기업대출</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">출처 상담</span>
+                <span class="approval-meta-value">2025-04-04 대구수성</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">AI 신뢰도</span>
+                <span class="approval-meta-value">★ 97.3%</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">등록 Q&A 수</span>
+                <span class="approval-meta-value" id="qnaCount">2개</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">중소기업대출</span>
+              <span class="tag">운전자금</span>
+              <span class="tag">여신한도</span>
+              <span class="tag">신용등급</span>
+            </div>
+            <div class="approval-btn-row">
+              <button class="btn-approve" onclick="approve()">✅ 승인 · 챗봇 등록</button>
+              <button class="btn-reject" onclick="showToast('반려 처리되었습니다.','⚠️')">반려</button>
+            </div>
+          </div>
+
+          <div class="detail-panel">
+            <div class="panel-header" style="background:var(--gray-bg);border-bottom:1px solid var(--gray-border);">
+              <h3 style="color:var(--navy);">📌 검토 체크리스트</h3>
+            </div>
+            <div class="panel-body">
+              <div id="checklist" style="display:flex;flex-direction:column;gap:10px;">
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 질문이 명확하고 검색 가능한 형태인지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 답변 내용이 현행 규정·지침과 일치하는지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 개인정보 및 기밀 정보가 포함되지 않았는지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 카테고리 분류가 적절한지 확인
+                </label>
+              </div>
+              <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-border);">
+                <div style="font-size:12px;font-weight:600;color:var(--gray-text);margin-bottom:6px;">검토 메모 (선택)</div>
+                <textarea style="width:100%;background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;resize:none;outline:none;color:var(--navy);line-height:1.6;" rows="3" placeholder="특이사항이나 추가 검토 내용을 입력하세요..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── REVIEW2 (영남대지점 부수계정) ─── -->
+    <div id="tab-review2" class="page-section">
+      <div style="margin-bottom:20px;">
+        <h2 style="font-size:18px;font-weight:900;color:var(--navy);">Q&A 검토 · 수정</h2>
+        <p style="font-size:12.5px;color:var(--gray-text);margin-top:3px;">AI 자동 생성된 Q&A를 검토하고 챗봇에 등록하세요</p>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <!-- 상담 원문 -->
+          <div class="detail-panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+              <h3>📞 상담 원문 (AI 텍스트 변환)</h3>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--mint);font-weight:600;">🤖 STT 신뢰도 95.8%</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex;gap:16px;margin-bottom:14px;padding:12px;background:var(--gray-bg);border-radius:var(--radius-sm);border:1px solid var(--gray-border);">
+                <div style="flex:1;text-align:center;">
+                  <div style="font-size:10px;color:var(--gray-text);font-weight:600;margin-bottom:3px;">발신</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">영남대 지점</div>
+                  <div style="font-size:11px;color:var(--gray-text);">박똑디 행원</div>
+                </div>
+                <div style="display:flex;align-items:center;color:var(--mint);font-size:18px;">→</div>
+                <div style="flex:1;text-align:center;">
+                  <div style="font-size:10px;color:var(--gray-text);font-weight:600;margin-bottom:3px;">수신</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">ICT금융부</div>
+                  <div style="font-size:11px;color:var(--gray-text);">오늘 16:42 · 3분 15초</div>
+                </div>
+              </div>
+              <div class="transcript-box">
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-br">영업점</span>
+                  안녕하세요, 영남대지점 박똑디 행원입니다. 오늘 마감을 하려고 하는데요, 123456 계정에 돈이 남아 있어서 마감이 안 됩니다. 저희 지점에서는 이 계정에 돈을 넣은 적이 없거든요. 어떻게 처리해야 하나요?
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-hq">본부</span>
+                  네, 박똑디 행원님. 해당 123456 계정은 부수계정입니다. xxxx 사유로 내려보낼 수 없을 때, 잠깐 경유시켜 놓는 임시 계정이에요.   아마 카드 수수료일 가능성이 높습니다.
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-br">영업점</span>
+                  그러면 저희가 직접 처리하면 안 되는 건가요?
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-hq">본부</span>
+                  네, 영업점에서 임의로 처리하시면 안 됩니다. 관련 본부 부서에서 공문이나 동보메시지를 발송했을 텐데요, 해당 내용을 먼저 확인해 보시겠어요? 거기에 처리 안내가 나와 있을 겁니다.
+                </div>
+                <div>
+                  <span class="speaker speaker-br">영업점</span>
+                  아, 동보메시지 확인해 보겠습니다. 감사합니다.
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">마감</span>
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">부수계정</span>
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">카드수수료</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q&A 편집 -->
+          <div class="detail-panel">
+            <div class="panel-header">
+              <h3>🤖 AI 생성 Q&A — 수정 가능</h3>
+              <span style="font-size:11px;color:rgba(255,255,255,0.5);">클릭하여 직접 편집</span>
+            </div>
+            <div class="panel-body">
+
+              <div class="qna-item" id="qna2_1">
+                <div class="qna-q">
+                  <span class="qna-q-label">Q</span>
+                  <textarea id="q2_1" rows="2" oninput="autoResize(this)">영업 마감 시 123456 계정에 잔액이 남아 마감이 안 되는 경우 어떻게 해야 하나요?</textarea>
+                </div>
+                <div class="qna-a">
+                  <span class="qna-a-label">A</span>
+                  <textarea id="a2_1" rows="5" oninput="autoResize(this)">123456 계정은 xxxx 사유로 이체할 수 없을 때 일시적으로 경유하는 부수계정입니다. 영업점에서 임의로 처리하시면 안 되며, 관련 본부 부서에서 발송한 공문 또는 동보메시지를 먼저 확인하시기 바랍니다. 해당 메시지에 구체적인 처리 절차가 안내되어 있습니다.</textarea>
+                </div>
+                <div class="qna-actions">
+                  <button class="btn btn-sm btn-outline" onclick="resetQna('q2_1','a2_1','영업 마감 시 123456 계정에 잔액이 남아 마감이 안 되는 경우 어떻게 해야 하나요?','123456 계정은 xxxx 사유로 이체할 수 없을 때 일시적으로 경유하는 부수계정입니다. 영업점에서 임의로 처리하시면 안 되며, 관련 본부 부서에서 발송한 공문 또는 동보메시지를 먼저 확인하시기 바랍니다. 해당 메시지에 구체적인 처리 절차가 안내되어 있습니다.')">↺ 원본 복원</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeQna('qna2_1')">✕ 삭제</button>
+                </div>
+              </div>
+
+              <div class="qna-item" id="qna2_2">
+                <div class="qna-q">
+                  <span class="qna-q-label">Q</span>
+                  <textarea id="q2_2" rows="2" oninput="autoResize(this)">123456 부수계정에 잔액이 생기는 이유는 무엇인가요?</textarea>
+                </div>
+                <div class="qna-a">
+                  <span class="qna-a-label">A</span>
+                  <textarea id="a2_2" rows="4" oninput="autoResize(this)">123456 계정은 임시 경유 계정입니다. 주로 카드 수수료 등 자금이 일시적으로 적재될 수 있으며, 관련 본부 부서의 공문 또는 동보메시지를 통해 처리 지침이 안내됩니다.</textarea>
+                </div>
+                <div class="qna-actions">
+                  <button class="btn btn-sm btn-outline" onclick="resetQna('q2_2','a2_2','123456 부수계정에 잔액이 생기는 이유는 무엇인가요?','123456 부수계정은 본부가 영업점에 직접 자금을 내려보낼 수 없는 구조적 제약으로 인해 사용되는 임시 경유 계정입니다. 주로 카드 수수료 등 본부에서 처리해야 할 자금이 일시적으로 적재될 수 있으며, 관련 본부 부서의 공문 또는 동보메시지를 통해 처리 지침이 안내됩니다.')">↺ 원본 복원</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeQna('qna2_2')">✕ 삭제</button>
+                </div>
+              </div>
+
+              <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:4px;" onclick="addQna()">
+                + Q&A 직접 추가
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 승인 패널 -->
+        <div>
+          <div class="approval-box" style="margin-bottom:16px;">
+            <h4>📋 챗봇 등록 정보</h4>
+            <p>아래 정보를 확인하고 승인 시 챗봇 지식 DB에 즉시 반영됩니다.</p>
+            <div class="approval-meta">
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">카테고리</span>
+                <span class="approval-meta-value">ICT · 계정·마감</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">출처 상담</span>
+                <span class="approval-meta-value">2025-04-04 영남대지점</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">AI 신뢰도</span>
+                <span class="approval-meta-value">★ 95.8%</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">등록 Q&A 수</span>
+                <span class="approval-meta-value">2개</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">부수계정</span>
+              <span class="tag">123456</span>
+              <span class="tag">마감오류</span>
+              <span class="tag">카드수수료</span>
+            </div>
+            <div class="approval-btn-row">
+              <button class="btn-approve" onclick="approve()">✅ 승인 · 챗봇 등록</button>
+              <button class="btn-reject" onclick="showToast('반려 처리되었습니다.','⚠️')">반려</button>
+            </div>
+          </div>
+
+          <div class="detail-panel">
+            <div class="panel-header" style="background:var(--gray-bg);border-bottom:1px solid var(--gray-border);">
+              <h3 style="color:var(--navy);">📌 검토 체크리스트</h3>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 질문이 명확하고 검색 가능한 형태인지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 답변 내용이 현행 규정·지침과 일치하는지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 개인정보 및 기밀 정보가 포함되지 않았는지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 카테고리 분류가 적절한지 확인
+                </label>
+              </div>
+              <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-border);">
+                <div style="font-size:12px;font-weight:600;color:var(--gray-text);margin-bottom:6px;">검토 메모 (선택)</div>
+                <textarea style="width:100%;background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;resize:none;outline:none;color:var(--navy);line-height:1.6;" rows="3" placeholder="특이사항이나 추가 검토 내용을 입력하세요..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── REVIEW3 (포항북구지점 외화송금) ─── -->
+    <div id="tab-review3" class="page-section">
+      <div style="margin-bottom:20px;">
+        <h2 style="font-size:18px;font-weight:900;color:var(--navy);">Q&A 검토 · 수정</h2>
+        <p style="font-size:12.5px;color:var(--gray-text);margin-top:3px;">AI 자동 생성된 Q&A를 검토하고 챗봇에 등록하세요</p>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <!-- 상담 원문 -->
+          <div class="detail-panel" style="margin-bottom:20px;">
+            <div class="panel-header">
+              <h3>📞 상담 원문 (AI 텍스트 변환)</h3>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;color:var(--mint);font-weight:600;">🤖 STT 신뢰도 96.1%</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex;gap:16px;margin-bottom:14px;padding:12px;background:var(--gray-bg);border-radius:var(--radius-sm);border:1px solid var(--gray-border);">
+                <div style="flex:1;text-align:center;">
+                  <div style="font-size:10px;color:var(--gray-text);font-weight:600;margin-bottom:3px;">발신</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">포항 북구지점</div>
+                  <div style="font-size:11px;color:var(--gray-text);">이우디 대리</div>
+                </div>
+                <div style="display:flex;align-items:center;color:var(--mint);font-size:18px;">→</div>
+                <div style="flex:1;text-align:center;">
+                  <div style="font-size:10px;color:var(--gray-text);font-weight:600;margin-bottom:3px;">수신</div>
+                  <div style="font-size:13px;font-weight:700;color:var(--navy);">외환사업부</div>
+                  <div style="font-size:11px;color:var(--gray-text);">오늘 11:05 · 4분 18초</div>
+                </div>
+              </div>
+              <div class="transcript-box">
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-br">영업점</span>
+                  안녕하세요, 포항 북구지점 이우디 대리입니다. 오늘 법인 고객이 해외 송금을 신청하셨는데요, 건당 한도를 초과하는 케이스가 발생했습니다. 이 경우 어떤 절차로 처리해야 하나요?
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-hq">본부</span>
+                  네, 이우디 대리님. 법인 고객의 외화 송금 한도 초과 시에는 외환사업부와 사전 협의가 필요합니다. 먼저 거래 목적 확인서와 관련 계약서류를 구비하셔야 하고요.
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-br">영업점</span>
+                  구체적으로 어떤 서류가 필요한지 알 수 있을까요? 그리고 협의 기간은 보통 얼마나 걸리나요?
+                </div>
+                <div style="margin-bottom:10px;">
+                  <span class="speaker speaker-hq">본부</span>
+                  필요 서류는 거래 목적 확인서, 수출입 계약서 또는 이에 준하는 증빙, 법인 인감증명서입니다. 협의 기간은 서류 완비 후 보통 1~2 영업일 이내에 처리됩니다. 긴급 건은 당일 협의도 가능하니 외환사업부로 직접 연락 주세요.
+                </div>
+                <div>
+                  <span class="speaker speaker-br">영업점</span>
+                  알겠습니다. 서류 안내 후 외환사업부로 연락하겠습니다. 감사합니다.
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">외환</span>
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">해외송금</span>
+                <span style="background:var(--mint-pale);color:var(--mint-dark);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--mint-mid);">한도초과</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q&A 편집 -->
+          <div class="detail-panel">
+            <div class="panel-header">
+              <h3>🤖 AI 생성 Q&A — 수정 가능</h3>
+              <span style="font-size:11px;color:rgba(255,255,255,0.5);">클릭하여 직접 편집</span>
+            </div>
+            <div class="panel-body">
+
+              <div class="qna-item" id="qna3_1">
+                <div class="qna-q">
+                  <span class="qna-q-label">Q</span>
+                  <textarea id="q3_1" rows="2" oninput="autoResize(this)">법인 고객의 외화 송금 한도 초과 시 처리 절차는 어떻게 되나요?</textarea>
+                </div>
+                <div class="qna-a">
+                  <span class="qna-a-label">A</span>
+                  <textarea id="a3_1" rows="5" oninput="autoResize(this)">법인 고객의 외화 송금이 건당 한도를 초과하는 경우 외환사업부와 사전 협의가 필요합니다. 거래 목적 확인서, 수출입 계약서(또는 이에 준하는 증빙), 법인 인감증명서를 구비한 후 외환사업부로 협의를 요청하시기 바랍니다. 서류 완비 후 통상 1~2 영업일 이내 처리되며, 긴급 건은 당일 협의도 가능합니다.</textarea>
+                </div>
+                <div class="qna-actions">
+                  <button class="btn btn-sm btn-outline" onclick="resetQna('q3_1','a3_1','법인 고객의 외화 송금 한도 초과 시 처리 절차는 어떻게 되나요?','법인 고객의 외화 송금이 건당 한도를 초과하는 경우 외환사업부와 사전 협의가 필요합니다. 거래 목적 확인서, 수출입 계약서(또는 이에 준하는 증빙), 법인 인감증명서를 구비한 후 외환사업부로 협의를 요청하시기 바랍니다. 서류 완비 후 통상 1~2 영업일 이내 처리되며, 긴급 건은 당일 협의도 가능합니다.')">↺ 원본 복원</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeQna('qna3_1')">✕ 삭제</button>
+                </div>
+              </div>
+
+              <div class="qna-item" id="qna3_2">
+                <div class="qna-q">
+                  <span class="qna-q-label">Q</span>
+                  <textarea id="q3_2" rows="2" oninput="autoResize(this)">외화 송금 한도 초과 처리 시 필요한 서류는 무엇인가요?</textarea>
+                </div>
+                <div class="qna-a">
+                  <span class="qna-a-label">A</span>
+                  <textarea id="a3_2" rows="4" oninput="autoResize(this)">외화 송금 한도 초과 처리를 위해 필요한 서류는 ① 거래 목적 확인서, ② 수출입 계약서 또는 이에 준하는 증빙서류, ③ 법인 인감증명서입니다. 서류 준비 후 외환사업부에 협의를 요청하시기 바랍니다.</textarea>
+                </div>
+                <div class="qna-actions">
+                  <button class="btn btn-sm btn-outline" onclick="resetQna('q3_2','a3_2','외화 송금 한도 초과 처리 시 필요한 서류는 무엇인가요?','외화 송금 한도 초과 처리를 위해 필요한 서류는 ① 거래 목적 확인서, ② 수출입 계약서 또는 이에 준하는 증빙서류, ③ 법인 인감증명서입니다. 서류 준비 후 외환사업부에 협의를 요청하시기 바랍니다.')">↺ 원본 복원</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeQna('qna3_2')">✕ 삭제</button>
+                </div>
+              </div>
+
+              <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:4px;" onclick="addQna()">
+                + Q&A 직접 추가
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 승인 패널 -->
+        <div>
+          <div class="approval-box" style="margin-bottom:16px;">
+            <h4>📋 챗봇 등록 정보</h4>
+            <p>아래 정보를 확인하고 승인 시 챗봇 지식 DB에 즉시 반영됩니다.</p>
+            <div class="approval-meta">
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">카테고리</span>
+                <span class="approval-meta-value">외환 · 해외송금</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">출처 상담</span>
+                <span class="approval-meta-value">2025-04-04 포항북구지점</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">AI 신뢰도</span>
+                <span class="approval-meta-value">★ 96.1%</span>
+              </div>
+              <div class="approval-meta-row">
+                <span class="approval-meta-label">등록 Q&A 수</span>
+                <span class="approval-meta-value">2개</span>
+              </div>
+            </div>
+            <div class="tag-row">
+              <span class="tag">외화송금</span>
+              <span class="tag">한도초과</span>
+              <span class="tag">법인</span>
+              <span class="tag">외환사업부</span>
+            </div>
+            <div class="approval-btn-row">
+              <button class="btn-approve" onclick="approve()">✅ 승인 · 챗봇 등록</button>
+              <button class="btn-reject" onclick="showToast('반려 처리되었습니다.','⚠️')">반려</button>
+            </div>
+          </div>
+
+          <div class="detail-panel">
+            <div class="panel-header" style="background:var(--gray-bg);border-bottom:1px solid var(--gray-border);">
+              <h3 style="color:var(--navy);">📌 검토 체크리스트</h3>
+            </div>
+            <div class="panel-body">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 질문이 명확하고 검색 가능한 형태인지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 답변 내용이 현행 규정·지침과 일치하는지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 개인정보 및 기밀 정보가 포함되지 않았는지 확인
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:13px;color:var(--gray-dark);">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--mint);"> 카테고리 분류가 적절한지 확인
+                </label>
+              </div>
+              <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gray-border);">
+                <div style="font-size:12px;font-weight:600;color:var(--gray-text);margin-bottom:6px;">검토 메모 (선택)</div>
+                <textarea style="width:100%;background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Noto Sans KR',sans-serif;font-size:12.5px;resize:none;outline:none;color:var(--navy);line-height:1.6;" rows="3" placeholder="특이사항이나 추가 검토 내용을 입력하세요..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── KB ─── -->
+    <div id="tab-kb" class="page-section">
+      <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <h2 style="font-size:18px;font-weight:900;color:var(--navy);">챗봇 지식 데이터베이스</h2>
+          <p style="font-size:12.5px;color:var(--gray-text);margin-top:3px;">승인 완료된 Q&A 목록 — 현재 <b style="color:var(--navy)">47건</b> 등록됨</p>
+        </div>
+        <button class="btn btn-primary">+ Q&A 직접 등록</button>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:14px;">
+        <div class="search-bar" style="flex:1;">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="질문 내용으로 검색...">
+        </div>
+        <button class="btn btn-outline">🗂️ 카테고리</button>
+        <button class="btn btn-outline">📅 등록일</button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-chip active">전체</div>
+        <div class="filter-chip">여신</div>
+        <div class="filter-chip">수신</div>
+        <div class="filter-chip">외환</div>
+        <div class="filter-chip">디지털</div>
+        <div class="filter-chip">카드</div>
+        <div class="filter-chip">기타</div>
+      </div>
+
+      <div class="kb-grid">
+        <div class="kb-card" onclick="openKbModal(0)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-loan">여신</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 124회</span>
+          </div>
+          <div class="kb-card-q">중소기업 운전자금 대출 한도 산정 기준은?</div>
+          <div class="kb-card-a">최근 1년 매출액의 xx% 이내에서 산정하며, 신용등급 A 이상인 경우 최대 xx%까지 상향 가능합니다. 부동산 담보 제공 시 담보인정비율 xx% 범위 내 추가 한도 반영...</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.04.04 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(0)">수정</button>
+          </div>
+        </div>
+        <div class="kb-card" onclick="openKbModal(1)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-digital">디지털</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 89회</span>
+          </div>
+          <div class="kb-card-q">iM뱅크 앱 기업인증서를 재발급하려면 어떻게 해야 하나요?</div>
+          <div class="kb-card-a">iM뱅크 앱 접속 후 [인증/보안] > [인증서 발급/재발급] 메뉴에서 본인 확인 후 재발급 가능합니다. 창구 방문 없이 비대면 처리 가능...</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.04.03 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(1)">수정</button>
+          </div>
+        </div>
+        <div class="kb-card" onclick="openKbModal(2)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-foreign">외환</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 67회</span>
+          </div>
+          <div class="kb-card-q">법인 해외 송금 시 건당 한도는 얼마인가요?</div>
+          <div class="kb-card-a">법인 해외 송금은 건당 제한 없이 실수요 범위 내에서 가능하며, 지정거래외국환은행 등록 후 연간 누적 한도 내 자유 송금이 가능합니다...</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.04.02 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(2)">수정</button>
+          </div>
+        </div>
+        <div class="kb-card" onclick="openKbModal(3)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-deposit">수신</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 203회</span>
+          </div>
+          <div class="kb-card-q">중소기업 정기예금 특별금리 조건은 무엇인가요?</div>
+          <div class="kb-card-a">iM뱅크 주거래 기업 인정 기준(급여이체 또는 결제계좌 보유) 충족 시 최대 +xx%p 우대금리 적용 가능합니다...</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.03.28 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(3)">수정</button>
+          </div>
+        </div>
+        <div class="kb-card" onclick="openKbModal(4)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-card">카드</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 55회</span>
+          </div>
+          <div class="kb-card-q">법인카드 한도 증액 신청은 어떻게 하나요?</div>
+          <div class="kb-card-a">iM뱅크 기업인터넷뱅킹 로그인 후 [카드서비스] > [한도조정신청] 메뉴에서 신청 가능합니다. 일정 금액 초과 시 별도 심사가 진행됩니다...</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.03.25 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(4)">수정</button>
+          </div>
+        </div>
+        <div class="kb-card" onclick="openKbModal(5)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-digital">ICT·마감</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 NEW</span>
+          </div>
+          <div class="kb-card-q">영업 마감 시 123456 부수계정에 잔액이 남아 마감이 안 될 경우 어떻게 처리하나요?</div>
+          <div class="kb-card-a">123456 계정은 본부 자금이 경유하는 임시 부수계정으로, 영업점이 임의 처리해서는 안 됩니다. 관련 본부 부서의 공문 또는 동보메시지를 확인하여 안내된 절차에 따라 처리하시기 바랍니다.</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.04.04 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(5)">수정</button>
+          </div>
+        </div>
+        <div class="kb-card" onclick="openKbModal(6)">
+          <div class="kb-card-header">
+            <span class="kb-category cat-general">일반</span>
+            <span style="font-size:11px;color:var(--gray-text);">👁 178회</span>
+          </div>
+          <div class="kb-card-q">영업점 고객 민원 처리 표준 프로세스는 어떻게 되나요?</div>
+          <div class="kb-card-a">민원 접수 즉시 해당 부서 담당자 배정 → 2영업일 내 처리 원칙 → 장기 민원 시 고객만족팀 에스컬레이션합니다...</div>
+          <div class="kb-card-footer">
+            <span class="kb-card-date">2025.03.20 등록</span>
+            <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();openKbModal(6)">수정</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 Q&A 상세 보기</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="kb-detail-q">중소기업 운전자금 대출 한도는 어떻게 산정하나요?</div>
+      <div class="kb-detail-a">중소기업 운전자금 대출 한도는 최근 1년 매출액의 xx% 이내에서 산정됩니다. 단, 신용등급 A등급 이상인 경우 최대 xx%까지 상향 적용이 가능합니다. 부동산 담보 제공 시에는 담보인정비율 xx% 범위 내에서 추가 한도가 반영될 수 있습니다. (근거: 규정 제99조 99항)</div>
+      <div class="detail-row">
+        <span class="detail-key">카테고리</span>
+        <span class="detail-val">여신 · 기업대출</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">출처</span>
+        <span class="detail-val">2025.04.04 대구 수성지점 상담</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">등록자</span>
+        <span class="detail-val">김아뱅 (ICT 금융부)</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">조회수</span>
+        <span class="detail-val">124회</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">최종 수정</span>
+        <span class="detail-val">2025.04.04</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">닫기</button>
+      <button class="btn btn-primary">✏️ 수정하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✅</span>
+  <span id="toast-msg">Q&A가 챗봇에 등록되었습니다!</span>
+</div>
+
+<script>
+  // ── Tab navigation ──
+  function showTab(id) {
+    document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    document.getElementById('tab-' + id).classList.add('fade-in');
+    setTimeout(() => document.getElementById('tab-' + id).classList.remove('fade-in'), 400);
+
+    // sidebar active 표시 (review2는 review 메뉴 활성화)
+    const sidebarId = id === 'review2' ? 'review' : id;
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    const icons = { dashboard: '📊', calls: '📞', review: '✏️', kb: '📚' };
+    document.querySelectorAll('.sidebar-item').forEach(el => {
+      if (el.textContent.trim().includes(icons[sidebarId] || '')) el.classList.add('active');
+    });
+  }
+
+  // ── QnA helpers ──
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  function resetQna(qId, aId, qOrig, aOrig) {
+    document.getElementById(qId).value = qOrig;
+    document.getElementById(aId).value = aOrig;
+    showToast('원본으로 복원되었습니다.', '↺');
+  }
+
+  function removeQna(id) {
+    const el = document.getElementById(id);
+    el.style.transition = 'all 0.2s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+    setTimeout(() => { el.remove(); updateQnaCount(); }, 200);
+  }
+
+  let qnaCounter = 3;
+  function addQna() {
+    const id = 'qna' + qnaCounter++;
+    const html = `<div class="qna-item" id="${id}">
+      <div class="qna-q">
+        <span class="qna-q-label">Q</span>
+        <textarea rows="2" placeholder="질문을 입력하세요..." oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="qna-a">
+        <span class="qna-a-label">A</span>
+        <textarea rows="3" placeholder="답변을 입력하세요..." oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="qna-actions">
+        <button class="btn btn-sm btn-danger" onclick="removeQna('${id}')">✕ 삭제</button>
+      </div>
+    </div>`;
+    const addBtn = document.querySelector('#tab-review .btn-outline[onclick="addQna()"]');
+    addBtn.insertAdjacentHTML('beforebegin', html);
+    updateQnaCount();
+    showToast('Q&A 항목이 추가되었습니다.', '＋');
+  }
+
+  function updateQnaCount() {
+    const count = document.querySelectorAll('.qna-item').length;
+    const el = document.getElementById('qnaCount');
+    if (el) el.textContent = count + '개';
+  }
+
+  // ── Modal2 (부수계정 KB 상세) ──
+  function openModal2() {
+    openKbModal(5);
+  }
+
+  // ── Approve ──
+  function approve() {
+    showToast('✅ Q&A가 챗봇 지식 DB에 등록되었습니다!', '🎉');
+    setTimeout(() => showTab('kb'), 1200);
+  }
+
+  // ── Toast ──
+  function showToast(msg, icon = '✅') {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    document.getElementById('toast-icon').textContent = icon;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  // ── KB 모달 데이터 ──
+  const kbData = [
+    {
+      q: '중소기업 운전자금 대출 한도는 어떻게 산정하나요?',
+      a: '중소기업 운전자금 대출 한도는 최근 1년 매출액의 xx% 이내에서 산정됩니다. 단, 신용등급 A등급 이상인 경우 최대 xx%까지 상향 적용이 가능합니다. 부동산 담보 제공 시에는 담보인정비율 xx% 범위 내에서 추가 한도가 반영될 수 있습니다. (근거: 규정 제 99조 99항)',
+      category: '여신 · 기업대출', source: '2025.04.04 대구 수성지점 상담', registrant: '김아뱅 (ICT금융부)', views: '124회', date: '2025.04.04'
+    },
+    {
+      q: 'iM뱅크 앱에서 기업인증서를 재발급받는 방법은 무엇인가요?',
+      a: '기업 고객이 스마트폰 교체 후 앱 인증서를 이전할 수 없는 경우, 영업점 창구 방문 없이 iM뱅크 앱에서 직접 재발급이 가능합니다. 앱 내 [인증서 관리] → [재발급] 메뉴를 통해 본인인증 후 재발급을 진행하시면 됩니다. 단, 기업 공동인증서의 경우 대표자 명의 휴대폰으로 인증이 필요합니다.',
+      category: '디지털금융 · 인증서', source: '2025.04.03 안동 지점 상담', registrant: '김아뱅 (ICT금융부)', views: '89회', date: '2025.04.03'
+    },
+    {
+      q: '법인 고객의 외화 송금 한도 초과 시 처리 절차는 어떻게 되나요?',
+      a: '법인 고객의 외화 송금이 건당 한도를 초과하는 경우 외환사업부와 사전 협의가 필요합니다. 거래 목적 확인서, 수출입 계약서(또는 이에 준하는 증빙), 법인 인감증명서를 구비한 후 외환사업부로 협의를 요청하시기 바랍니다. 서류 완비 후 통상 1~2 영업일 이내 처리되며, 긴급 건은 당일 협의도 가능합니다.',
+      category: '외환 · 해외송금', source: '2025.04.02 포항 북구지점 상담', registrant: '김아뱅 (ICT 금융부)', views: '67회', date: '2025.04.02'
+    },
+    {
+      q: '중소기업 정기예금 특별금리 조건은 무엇인가요?',
+      a: 'iM뱅크 주거래 기업 인정 기준(급여이체 또는 결제계좌 보유) 충족 시 최대 +xx%p 우대금리 적용이 가능합니다. 신규 거래 기업의 경우 최초 거래일로부터 6개월 이내 우대 적용이 되며, 만기 시 자동 재예치 조건을 선택하면 추가 +xx%p 혜택이 제공됩니다.',
+      category: '수신 · 기업예금', source: '2025.03.28 내부 등록', registrant: '김아뱅 (ICT금융부)', views: '203회', date: '2025.03.28'
+    },
+    {
+      q: '법인카드 한도 증액 신청은 어떻게 하나요?',
+      a: 'iM뱅크 기업인터넷뱅킹 로그인 후 [카드서비스] > [한도조정신청] 메뉴에서 신청 가능합니다. 월 이용 한도 9999만 원 초과 증액의 경우 별도 심사가 진행되며, 재무제표 등 서류가 요구될 수 있습니다. 심사 기간은 영업일 기준 2~3일 소요됩니다.',
+      category: '카드 · 법인카드', source: '2025.03.25 내부 등록', registrant: '김아뱅 (ICT금융부)', views: '55회', date: '2025.03.25'
+    },
+    {
+      q: '영업 마감 시 123456 부수계정에 잔액이 남아 마감이 안 될 경우 어떻게 처리하나요?',
+      a: '123456 계정은 xxxx 사유로 이체할 수 없을 때 일시적으로 경유하는 부수계정입니다. 영업점에서 임의로 처리해서는 안 되며, 관련 본부 부서에서 발송한 공문 또는 동보메시지를 먼저 확인하시기 바랍니다. 해당 안내에 따라 처리 절차를 진행하시면 됩니다. 주로 카드 수수료 등 본부 처리 자금이 적재되는 경우가 많습니다.',
+      category: 'ICT · 계정·마감', source: '2025.04.04 영남대 지점 상담', registrant: '김아뱅 (ICT금융부)', views: 'NEW', date: '2025.04.04'
+    },
+    {
+      q: '영업점 고객 민원 처리 표준 프로세스는 어떻게 되나요?',
+      a: '고객 민원 접수 즉시 담당 부서 배정 후 2영업일 이내 처리를 원칙으로 합니다. 처리 지연 또는 장기 민원의 경우 고객만족팀으로 에스컬레이션하며, 고객에게 중간 처리 현황을 반드시 안내해야 합니다. 민원 처리 완료 후 결과는 시스템에 등록하고 고객에게 서면 또는 유선으로 통보합니다.',
+      category: '일반 · 민원', source: '2025.03.20 내부 등록', registrant: '김아뱅 (ICT금융부)', views: '178회', date: '2025.03.20'
+    }
+  ];
+
+  function openKbModal(i) {
+    const d = kbData[i];
+    const modal = document.getElementById('modal');
+    modal.querySelector('.kb-detail-q').textContent = d.q;
+    modal.querySelector('.kb-detail-a').textContent = d.a;
+    const rows = modal.querySelectorAll('.detail-row');
+    rows[0].querySelector('.detail-val').textContent = d.category;
+    rows[1].querySelector('.detail-val').textContent = d.source;
+    rows[2].querySelector('.detail-val').textContent = d.registrant;
+    rows[3].querySelector('.detail-val').textContent = d.views;
+    rows[4].querySelector('.detail-val').textContent = d.date;
+    modal.classList.add('open');
+  }
+
+  // ── Modal ──
+  function openModal() {
+    document.getElementById('modal').classList.add('open');
+  }
+
+  // ── Modal (안동지점 기업인증서) ──
+  function openModalAndong() {
+    openKbModal(1);
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+
+  // ── Sidebar active sync ──
+  document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+    const ids = ['dashboard', 'calls', 'review', 'kb'];
+    if (i < 4) item.addEventListener('click', () => {});
+  });
+</script>
+</body>
+</html>
