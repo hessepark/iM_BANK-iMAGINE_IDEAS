@@ -123,7 +123,7 @@
 - 즉시 한글로 변환되어 표시
 - 직원 화면에 순차적으로 반영
 
-![Image](https://github.com/user-attachments/assets/6c4983b3-8f42-41f9-b5ec-80c37cbd89d7)
+![Image](https://github.com/user-attachments/assets/c7060dcc-96d7-4749-8e8e-21f3ca92d5b0)
 
 ---
 
@@ -133,7 +133,7 @@
 - 즉시 한글로 변환되어 표시
 - 직원 화면에 순차적으로 반영
 
-![Image](https://github.com/user-attachments/assets/70a700c2-d901-4b33-a3f8-855a7686dd69)
+![Image](https://github.com/user-attachments/assets/6f1ad218-0750-4eba-bfb5-7f82fc4fb589)
 
 ---
 
