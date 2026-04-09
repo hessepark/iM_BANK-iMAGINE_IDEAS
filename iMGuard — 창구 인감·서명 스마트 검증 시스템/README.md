@@ -174,7 +174,7 @@ AI가 전자문서와 비교하여 일치 여부를 판정한다.
 웹 애플리케이션 (Vue 기반 프로토타입)
 
 **데모 링크**  
-<!-- 🔗 링크 삽입 예정 -->
+https://hessepark.github.io/iM_BANK-iMAGINE_IDEAS/iMGuard%20%E2%80%94%20%EC%B0%BD%EA%B5%AC%20%EC%9D%B8%EA%B0%90%C2%B7%EC%84%9C%EB%AA%85%20%EC%8A%A4%EB%A7%88%ED%8A%B8%20%EA%B2%80%EC%A6%9D%20%EC%8B%9C%EC%8A%A4%ED%85%9C/iMGuard_demo.html
 
 **데모 설명**  
 본 데모는 더미데이터를 기반으로 총 4가지 시나리오를 구현하였다.
