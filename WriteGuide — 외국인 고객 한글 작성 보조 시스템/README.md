@@ -174,7 +174,7 @@
 웹 애플리케이션 (HTML 기반 프로토타입)
 
 **데모 링크**  
-https://hessepark.github.io/iM-BANK-iMAGINE_IDEAS/WriteGuide%20%E2%80%94%20%EC%99%B8%EA%B5%AD%EC%9D%B8%20%EA%B3%A0%EA%B0%9D%20%ED%95%9C%EA%B8%80%20%EC%9E%91%EC%84%B1%20%EB%B3%B4%EC%A1%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C/WriteGuid_demo.html
+https://hessepark.github.io/iM_BANK-iMAGINE_IDEAS/WriteGuide%20%E2%80%94%20%EC%99%B8%EA%B5%AD%EC%9D%B8%20%EA%B3%A0%EA%B0%9D%20%ED%95%9C%EA%B8%80%20%EC%9E%91%EC%84%B1%20%EB%B3%B4%EC%A1%B0%20%EC%8B%9C%EC%8A%A4%ED%85%9C/WriteGuid_demo.html
 
 **데모 설명**  
 본 데모는 더미데이터를 기반으로 총 2가지 시나리오를 구현하였다.
