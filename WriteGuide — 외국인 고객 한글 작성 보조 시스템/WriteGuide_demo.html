@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>외국인 고객 작성 보조 시스템 — 데모</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+  background: #f0f2f5;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 15px; font-weight: 700; color: #1a3388;
+  text-align: center; margin-bottom: 4px;
+}
+.subtitle { font-size: 11px; color: #778; text-align: center; margin-bottom: 16px; }
+
+.tab-bar {
+  display: flex; gap: 8px; justify-content: center; margin-bottom: 16px;
+}
+.tab-btn {
+  padding: 8px 24px; border-radius: 20px;
+  border: 1px solid #aabbcc; background: #e8ecf0;
+  font-size: 12px; cursor: pointer; font-family: inherit;
+  color: #556; transition: all 0.15s;
+}
+.tab-btn.active { background: #185FA5; color: white; border-color: #185FA5; font-weight: 700; }
+.tab-btn:hover:not(.active) { background: #d8e4f0; }
+
+.screen { display: none; }
+.screen.active { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 900px; margin: 0 auto; }
+
+.panel {
+  background: white; border: 1px solid #d0d8e4;
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.panel-header {
+  padding: 8px 14px; font-size: 11px; font-weight: 700;
+  border-bottom: 1px solid #e8ecf0;
+  background: #f4f6f9; color: #445;
+  display: flex; align-items: center; gap: 6px;
+}
+.panel-header .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+}
+.panel-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.doc-title {
+  font-size: 13px; font-weight: 700; text-align: center;
+  color: #1a3388; padding-bottom: 8px;
+  border-bottom: 1.5px solid #1a3388; margin-bottom: 2px;
+}
+.doc-subtitle { font-size: 10px; color: #778; text-align: center; margin-top: 3px; }
+
+.field-block { display: flex; flex-direction: column; gap: 3px; }
+.field-label { font-size: 10px; color: #667; font-weight: 600; }
+.field-val {
+  background: #f4f6f9; border: 1px solid #dde4ec;
+  border-radius: 6px; padding: 6px 10px;
+  font-size: 12px; color: #223; min-height: 32px;
+  display: flex; align-items: center;
+}
+.field-val.filled { background: #eaf3de; border-color: #66aa44; color: #1a5522; font-weight: 700; }
+.field-val.typing { background: white; border: 2px solid #111; color: #111; font-weight: 700; border-radius: 6px; }
+.field-val.pending { color: #aab; font-style: italic; font-size: 11px; }
+
+.badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  font-weight: 700; margin-left: 6px;
+}
+.badge.blue { background: #ddeeff; color: #1a3388; border: 1px solid #99bbdd; }
+
+.divider { border-top: 1px solid #eef; margin: 2px 0; }
+
+/* 보조 화면 */
+.assist-field { display: flex; flex-direction: column; gap: 3px; margin-bottom: 6px; }
+.assist-label { font-size: 10px; color: #556; font-weight: 600; }
+.assist-label .sub { font-size: 9px; color: #99a; font-weight: 400; margin-left: 4px; }
+
+.input-box {
+  background: #e8f0fb; border: 1.5px solid #185FA5;
+  border-radius: 6px; padding: 7px 10px;
+  font-size: 13px; color: #1a3388; min-height: 34px;
+  display: flex; align-items: center;
+  font-family: inherit;
+}
+.cursor {
+  display: inline-block; width: 2px; height: 14px;
+  background: #185FA5; margin-left: 1px;
+  animation: blink 0.7s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+.arrow-wrap {
+  text-align: center; font-size: 18px; color: #99aacc;
+  line-height: 1; margin: 1px 0;
+}
+
+.output-box {
+  border: 1.5px solid #3B6D11; border-radius: 6px;
+  padding: 8px 10px; min-height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 700; color: #1a5522;
+  background: #eaf3de; transition: all 0.3s;
+}
+.output-box.loading {
+  background: #f8f8f0; border-color: #cccc88; color: #998855;
+  font-size: 12px; font-weight: 400;
+}
+.output-box.empty {
+  background: #f4f6f9; border-color: #dde4ec; color: #bbc;
+  font-size: 11px; font-weight: 400;
+}
+
+.write-hint {
+  background: #fff4cc; border: 1px solid #e8b800;
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 11px; color: #664400; line-height: 1.7;
+  margin-top: 2px;
+}
+.write-hint .sub { font-size: 10px; color: #997744; }
+
+.step-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 11px; color: #556; margin-bottom: 4px;
+}
+.step-num {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #185FA5; color: white;
+  font-size: 10px; font-weight: 700; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.replay-btn {
+  display: block; margin: 12px auto 0;
+  padding: 7px 22px; border-radius: 20px;
+  border: 1.5px solid #185FA5; background: white;
+  color: #185FA5; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.replay-btn:hover { background: #185FA5; color: white; }
+
+@media(max-width:600px) {
+  .screen.active { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<h1>외국인 고객 작성 보조 시스템</h1>
+<div class="subtitle">고객이 자국어로 입력 → 즉시 한글 변환 → 따라쓰기</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchLang('cn', this)">중국어 버전</button>
+  <button class="tab-btn" onclick="switchLang('en', this)">영어 버전</button>
+</div>
+
+<!-- 중국어 -->
+<div class="screen active" id="screen-cn">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="dot" style="background:#2255aa;"></div>
+      직원 화면 — 원본 서류
+    </div>
+    <div class="panel-body">
+      <div class="doc-title">금융거래 목적 확인서</div>
+      <div class="field-block">
+        <div class="field-label">성명</div>
+        <div class="field-val">왕샤오밍 (王小明)</div>
+      </div>
+      <div class="field-block">
+        <div class="field-label">국적</div>
+        <div class="field-val">중국<span class="badge blue">국적 감지됨</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-block">
+        <div class="field-label">금융거래 목적</div>
+        <div class="field-val pending" id="cn-result-0">고객 입력 대기 중...</div>
+      </div>
+      <div class="field-block">
+        <div class="field-label">직업</div>
+        <div class="field-val pending" id="cn-result-1">고객 입력 대기 중...</div>
+      </div>
+      <div class="field-block">
+        <div class="field-label">학과</div>
+        <div class="field-val pending" id="cn-result-2">고객 입력 대기 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="dot" style="background:#cc4400;"></div>
+      고객 보조 화면 — 中文说明
+    </div>
+    <div class="panel-body">
+      <div class="doc-title">金融交易目的确认书
+        <div class="doc-subtitle">금융거래 목적 확인서</div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div>중국어로 입력하면 한글로 자동 변환됩니다<br>
+          <span style="font-size:10px;color:#99a;">请用中文输入，系统将自动转换为韩文</span>
+        </div>
+      </div>
+
+      <div class="assist-field">
+        <div class="assist-label">金融交易目的 <span class="sub">/ 금융거래 목적</span></div>
+        <div class="input-box" id="cn-input-0"><span class="cursor"></span></div>
+        <div class="arrow-wrap">↓</div>
+        <div class="output-box empty" id="cn-output-0">—</div>
+      </div>
+
+      <div class="assist-field">
+        <div class="assist-label">职业 <span class="sub">/ 직업</span></div>
+        <div class="input-box" id="cn-input-1"><span class="cursor"></span></div>
+        <div class="arrow-wrap">↓</div>
+        <div class="output-box empty" id="cn-output-1">—</div>
+      </div>
+
+      <div class="assist-field">
+        <div class="assist-label">学科 / 专业 <span class="sub">/ 학과</span></div>
+        <div class="input-box" id="cn-input-2"><span class="cursor"></span></div>
+        <div class="arrow-wrap">↓</div>
+        <div class="output-box empty" id="cn-output-2">—</div>
+      </div>
+
+      <div class="write-hint" id="cn-hint">
+        위 한글을 서류에 직접 따라 써주세요<br>
+        <span class="sub">请将上方韩文抄写到表格中</span>
+      </div>
+    </div>
+  </div>
+  <button class="replay-btn" style="grid-column:1/-1;" onclick="startDemo('cn')">다시 재생</button>
+</div>
+
+<!-- 영어 -->
+<div class="screen" id="screen-en">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="dot" style="background:#2255aa;"></div>
+      직원 화면 — 원본 서류
+    </div>
+    <div class="panel-body">
+      <div class="doc-title">금융거래 목적 확인서</div>
+      <div class="field-block">
+        <div class="field-label">성명</div>
+        <div class="field-val">James Anderson</div>
+      </div>
+      <div class="field-block">
+        <div class="field-label">국적</div>
+        <div class="field-val">미국<span class="badge blue">국적 감지됨</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="field-block">
+        <div class="field-label">금융거래 목적</div>
+        <div class="field-val pending" id="en-result-0">고객 입력 대기 중...</div>
+      </div>
+      <div class="field-block">
+        <div class="field-label">직업</div>
+        <div class="field-val pending" id="en-result-1">고객 입력 대기 중...</div>
+      </div>
+      <div class="field-block">
+        <div class="field-label">학과</div>
+        <div class="field-val pending" id="en-result-2">고객 입력 대기 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="dot" style="background:#cc4400;"></div>
+      고객 보조 화면 — English guide
+    </div>
+    <div class="panel-body">
+      <div class="doc-title">Financial Transaction Purpose Form
+        <div class="doc-subtitle">금융거래 목적 확인서</div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div>Type in English — converts to Korean automatically<br>
+          <span style="font-size:10px;color:#99a;">영문 입력 시 한글로 자동 변환됩니다</span>
+        </div>
+      </div>
+
+      <div class="assist-field">
+        <div class="assist-label">Purpose of transaction <span class="sub">/ 금융거래 목적</span></div>
+        <div class="input-box" id="en-input-0"><span class="cursor"></span></div>
+        <div class="arrow-wrap">↓</div>
+        <div class="output-box empty" id="en-output-0">—</div>
+      </div>
+
+      <div class="assist-field">
+        <div class="assist-label">Occupation <span class="sub">/ 직업</span></div>
+        <div class="input-box" id="en-input-1"><span class="cursor"></span></div>
+        <div class="arrow-wrap">↓</div>
+        <div class="output-box empty" id="en-output-1">—</div>
+      </div>
+
+      <div class="assist-field">
+        <div class="assist-label">Department / Major <span class="sub">/ 학과</span></div>
+        <div class="input-box" id="en-input-2"><span class="cursor"></span></div>
+        <div class="arrow-wrap">↓</div>
+        <div class="output-box empty" id="en-output-2">—</div>
+      </div>
+
+      <div class="write-hint" id="en-hint">
+        Please copy the Korean text above onto the form<br>
+        <span class="sub">위 한글을 서류에 직접 따라 써주세요</span>
+      </div>
+    </div>
+  </div>
+  <button class="replay-btn" style="grid-column:1/-1;" onclick="startDemo('en')">다시 재생</button>
+</div>
+
+<script>
+const DATA = {
+  cn: [
+    { input: '奖学金领取',  output: '장학금 수령',  result: '장학금 수령' },
+    { input: '学生',        output: '학생',          result: '학생' },
+    { input: '经营学',      output: '경영학과',      result: '경영학과' },
+  ],
+  en: [
+    { input: 'Scholarship receipt',    output: '장학금 수령',    result: '장학금 수령' },
+    { input: 'Student',                output: '학생',            result: '학생' },
+    { input: 'Business Administration',output: '경영학과',        result: '경영학과' },
+  ],
+};
+
+let timers = [];
+
+function clearTimers() {
+  timers.forEach(t => clearTimeout(t));
+  timers = [];
+}
+
+function later(fn, ms) {
+  const t = setTimeout(fn, ms);
+  timers.push(t);
+}
+
+function typeText(elId, text, speed, cb) {
+  const el = document.getElementById(elId);
+  el.innerHTML = '<span class="cursor"></span>';
+  let i = 0;
+  function next() {
+    if (i <= text.length) {
+      el.innerHTML = text.slice(0, i) + '<span class="cursor"></span>';
+      i++;
+      later(next, speed + Math.random() * 40);
+    } else {
+      if (cb) cb();
+    }
+  }
+  next();
+}
+
+function showLoading(outId) {
+  const el = document.getElementById(outId);
+  el.className = 'output-box loading';
+  el.textContent = '번역 중...';
+}
+
+function showResult(outId, text, resultId, resultText, cb) {
+  const out = document.getElementById(outId);
+  out.className = 'output-box';
+  out.textContent = text;
+  const res = document.getElementById(resultId);
+  res.className = 'field-val typing';
+  res.textContent = '';
+  let i = 0;
+  function typeKr() {
+    if (i <= resultText.length) {
+      res.textContent = resultText.slice(0, i);
+      i++;
+      later(typeKr, 550 + Math.random() * 250);
+    } else {
+      later(() => {
+        res.className = 'field-val filled';
+        later(() => { if (cb) cb(); }, 800);
+      }, 600);
+    }
+  }
+  later(typeKr, 1500);
+}
+
+function resetDemo(lang) {
+  const d = DATA[lang];
+  for (let i = 0; i < 3; i++) {
+    const inp = document.getElementById(`${lang}-input-${i}`);
+    inp.innerHTML = '<span class="cursor"></span>';
+    const out = document.getElementById(`${lang}-output-${i}`);
+    out.className = 'output-box empty';
+    out.textContent = '—';
+    const res = document.getElementById(`${lang}-result-${i}`);
+    res.className = 'field-val pending';
+    res.textContent = '고객 입력 대기 중...';
+  }
+
+}
+
+function runField(lang, idx, onDone) {
+  const d = DATA[lang];
+  const speed = lang === 'cn' ? 160 : 90;
+  typeText(`${lang}-input-${idx}`, d[idx].input, speed, () => {
+    later(() => {
+      showLoading(`${lang}-output-${idx}`);
+      later(() => {
+        showResult(
+          `${lang}-output-${idx}`,
+          d[idx].output,
+          `${lang}-result-${idx}`,
+          d[idx].result,
+          () => {
+            later(() => { if (onDone) onDone(); }, 600);
+          }
+        );
+      }, 900);
+    }, 400);
+  });
+}
+
+function startDemo(lang) {
+  clearTimers();
+  resetDemo(lang);
+  later(() => {
+    runField(lang, 0, () => {
+      runField(lang, 1, () => {
+        runField(lang, 2, () => {
+          later(() => {
+            document.getElementById(`${lang}-hint`).style.display = 'block';
+          }, 400);
+        });
+      });
+    });
+  }, 800);
+}
+
+function switchLang(lang, btn) {
+  clearTimers();
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`screen-${lang}`).classList.add('active');
+  btn.classList.add('active');
+  resetDemo('cn');
+  resetDemo('en');
+  setTimeout(() => startDemo(lang), 300);
+}
+
+window.onload = () => startDemo('cn');
+</script>
+</body>
+</html>
