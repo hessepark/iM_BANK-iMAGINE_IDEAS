@@ -55,7 +55,7 @@ AI가 전자문서와 비교하여 일치 여부를 판정한다.
 
   | 등록 인감 (예시) | 등록 서명 (예시) |
   |:---:|:---:|
-  | <img src="https://github.com/user-attachments/assets/c2137189-3aca-48b0-94a1-597c0372eb56" width="100"/> | <img src="https://github.com/user-attachments/assets/b716c723-d558-4936-86ad-51fc655c8d8c" width="200"/> |
+  | <img src="https://github.com/user-attachments/assets/41c1a218-682f-437f-b4a1-53eef9bf2362" width="100"/> | <img src="https://github.com/user-attachments/assets/18142866-e3d6-4e7e-8f95-88ea2f85cf6e" width="200"/> |
 
 - 최근 인감 분실, 서명 변경, 통장 재발행 이력
 
